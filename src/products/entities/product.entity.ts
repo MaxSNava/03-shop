@@ -1,8 +1,9 @@
 // Representacion de una tabla
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Product {
+
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -13,7 +14,7 @@ export class Product {
   title: string;
 
   @Column({
-    type: 'numeric',
+    type: 'float',
     default: 0
   })
   price: number;
@@ -28,7 +29,7 @@ export class Product {
     type: 'text',
     unique: true
   })
-  slung: string;
+  slug: string;
 
   @Column({
     type: 'int',
@@ -46,4 +47,13 @@ export class Product {
     type: 'text'
   })
   gender: string;
+
+  // -- 
+  @BeforeInsert()
+  checkSlugInsert() {
+    if (!this.slug) 
+      this.slug = this.title;
+
+    this.slug = this.slug.toLowerCase().replaceAll(' ', '_').replaceAll("'",'');
+  }
 }
